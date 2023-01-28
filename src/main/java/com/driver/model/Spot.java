@@ -13,7 +13,7 @@ public class Spot {
     @Enumerated(EnumType.STRING)
     private SpotType spotType;
     private int pricePerHour;
-    private Boolean occupied;
+    private boolean occupied;
 
 // child of parkingLot
     @ManyToOne
@@ -27,7 +27,7 @@ public class Spot {
     public Spot() {
     }
 
-    public Spot(SpotType spotType, int pricePerHour, Boolean occupied) {
+    public Spot(SpotType spotType, int pricePerHour, boolean occupied) {
         this.spotType = spotType;
         this.pricePerHour = pricePerHour;
         this.occupied = occupied;
@@ -57,11 +57,11 @@ public class Spot {
         this.pricePerHour = pricePerHour;
     }
 
-    public Boolean getOccupied() {
+    public boolean isOccupied() {
         return occupied;
     }
 
-    public void setOccupied(Boolean occupied) {
+    public void setOccupied(boolean occupied) {
         this.occupied = occupied;
     }
 
