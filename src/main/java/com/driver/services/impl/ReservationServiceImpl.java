@@ -36,8 +36,10 @@ public class ReservationServiceImpl implements ReservationService {
         Spot finalSpot = null;
         int bill = Integer.MAX_VALUE;
 
-        if(user != null && parkingLot != null)
+        if(user == null && parkingLot == null)
         {
+            throw new Exception("Cannot make reservation");
+        }
             List<Spot> availableSpotsList = new ArrayList<>();
 
             for(Spot spot: spotList)
@@ -66,12 +68,11 @@ public class ReservationServiceImpl implements ReservationService {
                     finalSpot = availableSpot;
                 }
             }
-        }
-        else throw new Exception("Cannot make reservation");
 
         Reservation reservation = new Reservation();
-        if(finalSpot != null)
-        {
+        if(finalSpot == null) {
+            throw new Exception("Cannot make reservation");
+        }
             // occupied true
             reservation.setSpot(finalSpot);
             reservation.setUser(user);
@@ -85,18 +86,8 @@ public class ReservationServiceImpl implements ReservationService {
 
             finalSpot.setOccupied(Boolean.TRUE);
 
-        }
-        else throw new Exception("Cannot make reservation");
-        Payment payment = new Payment();
-        payment.setPaymentCompleted(Boolean.FALSE);
-        payment.setReservation(reservation);
-        reservation.setPayment(payment);
-        /*
         userRepository3.save(user);
         spotRepository3.save(finalSpot);
-
-         */
-        reservationRepository3.save(reservation);
 
         return reservation;
     }
