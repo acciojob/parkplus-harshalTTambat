@@ -87,8 +87,15 @@ public class ReservationServiceImpl implements ReservationService {
 
         }
         else throw new Exception("Cannot make reservation");
+        Payment payment = new Payment();
+        payment.setPaymentCompleted(Boolean.FALSE);
+        payment.setReservation(reservation);
+        reservation.setPayment(payment);
+        /*
         userRepository3.save(user);
         spotRepository3.save(finalSpot);
+
+         */
         reservationRepository3.save(reservation);
 
         return reservation;

@@ -28,34 +28,47 @@ public class PaymentServiceImpl implements PaymentService {
 
         Reservation reservation = reservationRepository2.findById(reservationId).get();
         Spot spot = reservation.getSpot();
-        Payment payment = new Payment();
-        int bill = spot.getPricePerHour() * reservation.getNumberOfHours();
-        if(amountSent < bill)
-        {
-            payment.setPaymentCompleted(Boolean.FALSE);
-            throw new Exception("Insufficient Amount");
-        }
 
-        if(mode.equals("cash") || mode.equals("card") || mode.equals("upi"))
-        {
-            if(mode.equals("cash")) payment.setPaymentMode(PaymentMode.CASH);
-            else if(mode.equals("card")) payment.setPaymentMode(PaymentMode.CARD);
-            else payment.setPaymentMode(PaymentMode.UPI);
-        }
-        else
-        {
-            payment.setPaymentCompleted(Boolean.FALSE);
-            throw new Exception("Payment mode not detected");
-        }
+        Payment payment = reservation.getPayment();
 
-        payment.setReservation(reservation);
-        payment.setPaymentCompleted(Boolean.TRUE);
+        if(! isPaymentCompleted(reservationId))
+        {
+            int bill = spot.getPricePerHour() * reservation.getNumberOfHours();
+            if(amountSent < bill)
+            {
+                payment.setPaymentCompleted(Boolean.FALSE);
+                throw new Exception("Insufficient Amount");
+            }
 
-        reservation.setPayment(payment);
-        spot.setOccupied(Boolean.FALSE);
+            if(mode.equals("cash") || mode.equals("card") || mode.equals("upi"))
+            {
+                if(mode.equals("cash")) payment.setPaymentMode(PaymentMode.CASH);
+                else if(mode.equals("card")) payment.setPaymentMode(PaymentMode.CARD);
+                else payment.setPaymentMode(PaymentMode.UPI);
+            }
+            else
+            {
+                payment.setPaymentCompleted(Boolean.FALSE);
+                throw new Exception("Payment mode not detected");
+            }
+
+            payment.setReservation(reservation);
+            payment.setPaymentCompleted(Boolean.TRUE);
+
+            reservation.setPayment(payment);
+            spot.setOccupied(Boolean.FALSE);
+
+        }
 
         paymentRepository2.save(payment);
 
         return payment;
+    }
+    public Boolean isPaymentCompleted(Integer reservationId)
+    {
+        Reservation reservation = reservationRepository2.findById(reservationId).get();
+        Payment payment = reservation.getPayment();
+        if(payment.getPaymentCompleted()) return true;
+        else return false;
     }
 }
