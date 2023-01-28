@@ -29,6 +29,68 @@ public class ReservationServiceImpl implements ReservationService {
         //Note that the vehicle can only be parked in a spot having a type equal to or larger than given vehicle
         //If parkingLot is not found, user is not found, or no spot is available, throw "Cannot make reservation" exception.
 
-        return null;
+        User user = userRepository3.findById(userId).get();
+        ParkingLot parkingLot = parkingLotRepository3.findById(parkingLotId).get();
+        List<Spot> spotList = parkingLot.getSpotList();
+
+        Spot finalSpot = null;
+        int bill = Integer.MAX_VALUE;
+
+        if(user != null && parkingLot != null)
+        {
+            List<Spot> availableSpotsList = new ArrayList<>();
+
+            for(Spot spot: spotList)
+            {
+                if(spot.getOccupied() == false)
+                {
+                   int vehicle = 0;
+                   String str = spot.getSpotType().toString();
+                   char ch = str.charAt(0);
+                   if(ch == 'T') vehicle = 2;
+                   else if(ch == 'F') vehicle = 4;
+                   else if(ch == 'O') vehicle = 5;
+
+                   if(vehicle >= numberOfWheels)
+                       availableSpotsList.add(spot);
+                }
+            }
+            if(availableSpotsList.isEmpty()) throw new Exception("Cannot make reservation");
+
+            for(Spot availableSpot: availableSpotsList)
+            {
+                int currentBill = availableSpot.getPricePerHour() * timeInHours;
+                if(bill > currentBill)
+                {
+                    bill = currentBill;
+                    finalSpot = availableSpot;
+                }
+            }
+        }
+        else throw new Exception("Cannot make reservation");
+
+        Reservation reservation = new Reservation();
+        if(finalSpot != null)
+        {
+            // occupied true
+            reservation.setSpot(finalSpot);
+            reservation.setUser(user);
+            reservation.setNumberOfHours(timeInHours);
+
+            List<Reservation> reservationList = finalSpot.getReservationList();
+            reservationList.add(reservation);
+
+            finalSpot.setReservationList(reservationList);
+            user.setReservationList(reservationList);
+
+            finalSpot.setOccupied(Boolean.TRUE);
+
+        }
+        else throw new Exception("Cannot make reservation");
+        userRepository3.save(user);
+        spotRepository3.save(finalSpot);
+        reservationRepository3.save(reservation);
+
+        return reservation;
     }
 }

@@ -28,6 +28,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void register(String name, String phoneNumber, String password) {
         User user = new User(name,phoneNumber,password);
+        /*
+        List<Reservation> reservationList = new ArrayList<>();
+        user.setReservationList(reservationList);
+         */
         userRepository4.save(user);
     }
 }
