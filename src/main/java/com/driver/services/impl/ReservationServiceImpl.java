@@ -44,7 +44,7 @@ public class ReservationServiceImpl implements ReservationService {
 
             for(Spot spot: spotList)
             {
-                if(spot.isOccupied() == false)
+                if(spot.getOccupied() == false)
                 {
                    int vehicle = 0;
                    String str = spot.getSpotType().toString();

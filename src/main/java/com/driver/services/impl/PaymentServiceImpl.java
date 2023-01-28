@@ -28,7 +28,10 @@ public class PaymentServiceImpl implements PaymentService {
 
         PaymentMode paymentMode;
         Reservation reservation=reservationRepository2.findById(reservationId).get();
-        reservation.getSpot().setOccupied(false);
+        Payment payment = reservation.getPayment();
+        if(payment == null) payment = new Payment();
+        if(payment.isPaymentCompleted() == true) return payment;
+
         if(mode.equalsIgnoreCase("cash")){
             paymentMode=PaymentMode.CASH;
         }
@@ -39,15 +42,21 @@ public class PaymentServiceImpl implements PaymentService {
             paymentMode=PaymentMode.UPI;
         }
         else{
+            payment.setPaymentCompleted(Boolean.FALSE);
             throw new Exception("Payment mode not detected");
         }
         int bill=reservation.getSpot().getPricePerHour()*reservation.getNumberOfHours();
         if(amountSent<bill){
+            payment.setPaymentCompleted(Boolean.FALSE);
             throw  new Exception("Insufficient Amount");
         }
-        Payment payment=new Payment(true,paymentMode);
+
+        payment.setPaymentCompleted(Boolean.TRUE);
+        payment.setPaymentMode(paymentMode);
         payment.setReservation(reservation);
+
         reservation.setPayment(payment);
+        reservation.getSpot().setOccupied(false);
         reservationRepository2.save(reservation);
         return payment;
     }
