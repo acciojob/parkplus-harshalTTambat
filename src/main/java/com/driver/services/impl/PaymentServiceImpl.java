@@ -26,39 +26,37 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment pay(Integer reservationId, int amountSent, String mode) throws Exception {
 
-        PaymentMode paymentMode;
         Reservation reservation=reservationRepository2.findById(reservationId).get();
-        Payment payment = reservation.getPayment();
-        if(payment == null) payment = new Payment();
-        if(payment.isPaymentCompleted() == true) return payment;
+        Spot spot=reservation.getSpot();
 
-        if(mode.equalsIgnoreCase("cash")){
-            paymentMode=PaymentMode.CASH;
+        int amount=spot.getPricePerHour()*reservation.getNumberOfHours();
+        if(amountSent<amount){
+            throw new Exception("Insufficient Amount");
+
         }
-        else if(mode.equalsIgnoreCase("card")){
-            paymentMode=PaymentMode.CARD;
-        }
-        else if(mode.equalsIgnoreCase("upi")){
-            paymentMode=PaymentMode.UPI;
-        }
-        else{
-            payment.setPaymentCompleted(Boolean.FALSE);
+
+        Payment payment=new Payment();
+
+        String Mode=mode.toUpperCase();
+
+        if(Mode.equals("CASH")){
+            payment.setPaymentMode(PaymentMode.CASH);
+        } else if (Mode.equals("CARD")) {
+            payment.setPaymentMode(PaymentMode.CARD);
+        } else if (Mode.equals("UPI")) {
+            payment.setPaymentMode(PaymentMode.UPI);
+        }else{
+            payment.setPaymentCompleted(false);
             throw new Exception("Payment mode not detected");
         }
-        int bill=reservation.getSpot().getPricePerHour()*reservation.getNumberOfHours();
-        if(amountSent<bill){
-            payment.setPaymentCompleted(Boolean.FALSE);
-            throw  new Exception("Insufficient Amount");
-        }
 
-        payment.setPaymentCompleted(Boolean.TRUE);
-        payment.setPaymentMode(paymentMode);
+        payment.setPaymentCompleted(true);
         payment.setReservation(reservation);
-
         reservation.setPayment(payment);
-        reservation.getSpot().setOccupied(false);
-        reservationRepository2.save(reservation);
-        return payment;
-    }
 
+        reservationRepository2.save(reservation);
+
+        return payment;
+
+    }
 }
