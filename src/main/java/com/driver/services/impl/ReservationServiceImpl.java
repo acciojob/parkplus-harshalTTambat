@@ -58,9 +58,7 @@ public class ReservationServiceImpl implements ReservationService {
                    char ch = str.charAt(0);
                    if(ch == 'T') vehicle = 2;
                    else if(ch == 'F') vehicle = 4;
-                   else if(ch == 'O') vehicle = 5;
-
-
+                  // else if(ch == 'O') vehicle = 5;
                     /*
                     if (spot.getSpotType() == SpotType.TWO_WHEELER)
                         vehicle = 2;
@@ -68,8 +66,6 @@ public class ReservationServiceImpl implements ReservationService {
                         vehicle = 4;
 
                      */
-
-
                    if(vehicle >= numberOfWheels)
                        availableSpotsList.add(spot);
                 }
