@@ -58,7 +58,7 @@ public class ReservationServiceImpl implements ReservationService {
                    char ch = str.charAt(0);
                    if(ch == 'T') vehicle = 2;
                    else if(ch == 'F') vehicle = 4;
-                   //else if(ch == 'O') vehicle = 5;
+                   else if(ch == 'O') vehicle = 5;
 
 
                     /*
@@ -74,7 +74,7 @@ public class ReservationServiceImpl implements ReservationService {
                        availableSpotsList.add(spot);
                 }
             }
-            if(availableSpotsList.isEmpty()) throw new Exception("Cannot make reservation");
+           // if(availableSpotsList.isEmpty()) throw new Exception("Cannot make reservation");
 
             for(Spot availableSpot: availableSpotsList)
             {
