@@ -31,7 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         User user = userRepository3.findById(userId).get();
         ParkingLot parkingLot = parkingLotRepository3.findById(parkingLotId).get();
-        List<Spot> spotList = parkingLot.getSpotList();
+        //List<Spot> spotList = parkingLot.getSpotList();
 
         Spot finalSpot = null;
         int bill = Integer.MAX_VALUE;
@@ -40,18 +40,28 @@ public class ReservationServiceImpl implements ReservationService {
         {
             throw new Exception("Cannot make reservation");
         }
-            List<Spot> availableSpotsList = new ArrayList<>();
+        List<Spot> spotList = parkingLot.getSpotList();
+        List<Spot> availableSpotsList = new ArrayList<>();
 
             for(Spot spot: spotList)
             {
                 if(spot.getOccupied() == false)
                 {
-                   int vehicle = 0;
+
+                   int vehicle = Integer.MAX_VALUE;
+                    /*
                    String str = spot.getSpotType().toString();
                    char ch = str.charAt(0);
                    if(ch == 'T') vehicle = 2;
                    else if(ch == 'F') vehicle = 4;
                    else if(ch == 'O') vehicle = 5;
+
+                   */
+                    if (spot.getSpotType() == SpotType.TWO_WHEELER)
+                        vehicle = 2;
+                    else if (spot.getSpotType() == SpotType.FOUR_WHEELER)
+                        vehicle = 4;
+
 
                    if(vehicle >= numberOfWheels)
                        availableSpotsList.add(spot);
@@ -69,11 +79,10 @@ public class ReservationServiceImpl implements ReservationService {
                 }
             }
 
-        Reservation reservation = new Reservation();
         if(finalSpot == null) {
             throw new Exception("Cannot make reservation");
         }
-            // occupied true
+            Reservation reservation = new Reservation();
             reservation.setSpot(finalSpot);
             reservation.setUser(user);
             reservation.setNumberOfHours(timeInHours);
