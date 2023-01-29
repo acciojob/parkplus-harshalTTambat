@@ -35,12 +35,16 @@ public class ReservationServiceImpl implements ReservationService {
 
         Spot finalSpot = null;
         int bill = Integer.MAX_VALUE;
-
+/*
         if(user == null && parkingLot == null)
         {
             throw new Exception("Cannot make reservation");
         }
+
+ */
         List<Spot> spotList = parkingLot.getSpotList();
+        if(spotList == null) throw new Exception("Cannot make reservation");
+
         List<Spot> availableSpotsList = new ArrayList<>();
 
             for(Spot spot: spotList)
@@ -49,18 +53,21 @@ public class ReservationServiceImpl implements ReservationService {
                 {
 
                    int vehicle = Integer.MAX_VALUE;
-                    /*
+
                    String str = spot.getSpotType().toString();
                    char ch = str.charAt(0);
                    if(ch == 'T') vehicle = 2;
                    else if(ch == 'F') vehicle = 4;
-                   else if(ch == 'O') vehicle = 5;
+                   //else if(ch == 'O') vehicle = 5;
 
-                   */
+
+                    /*
                     if (spot.getSpotType() == SpotType.TWO_WHEELER)
                         vehicle = 2;
                     else if (spot.getSpotType() == SpotType.FOUR_WHEELER)
                         vehicle = 4;
+
+                     */
 
 
                    if(vehicle >= numberOfWheels)
